@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE module PUBLIC
+    "-//Google Inc.//DTD Google Web Toolkit trunk//EN"
+    "http://gwtproject.org/doctype/2.7.0/gwt-module.dtd">
+<module rename-to="asg.games.yokel">
+    <source path="yokel">
+
+        <include name="enums/ServerRequest.java" />
+
+        <include name="managers/GameManager.java" />
+
+        <include name="objects/AbstractYokelObject.java" />
+        <include name="objects/Copyable.java" />
+        <include name="objects/YokelBlock.java" />
+        <include name="objects/YokelBlockEval.java" />
+        <include name="objects/YokelBlockMove.java" />
+        <include name="objects/YokelBoardPair.java" />
+        <include name="objects/YokelClock.java" />
+        <include name="objects/YokelGameBoard.java" />
+        <include name="objects/YokelKeyMap.java" />
+        <include name="objects/YokelLounge.java" />
+        <include name="objects/YokelObject.java" />
+        <include name="objects/YokelObjectJPAVisitor.java" />
+        <include name="objects/YokelPiece.java" />
+        <include name="objects/YokelPlayer.java" />
+        <include name="objects/YokelRoom.java" />
+        <include name="objects/YokelSeat.java" />
+        <include name="objects/YokelTable.java" />
+        <include name="persistence/YokelStorageAdapter.java" />
+        <include name="persistence/ClientPlayerController.java" />
+        <include name="persistence/YokelStorage.java" />
+        <!--
+                <include name="persistence/AbstractStorage.java" />
+                 <include name="persistence/DateType.java" />
+                 <include name="persistence/IdGenerator.java" />
+                 <include name="persistence/MemoryStorage.java" />
+                 <include name="persistence/Resolver.java" />
+                 <include name="persistence/Saveable.java" />
+                 <include name="persistence/Storage.java" />
+                 <include name="persistence/YokelMemoryStorage.java" />
+                 <include name="persistence/YokelPlayerType.java" />
+                 <include name="persistence/YokelRoomType.java" />
+                 <include name="persistence/YokelTableType.java" />
+                 <include name="persistence/YokelUserType.java" />
+
+                 <include name="server/AdminClientRequest.java" />
+                 <include name="server/ClientRequest.java" />
+                 <include name="server/Packets.java" />
+                 <include name="server/PayloadType.java" />
+                 <include name="server/ServerResponse.java" />-->
+
+        <include name="utils/GwtUUIDUtil.java" />
+        <include name="utils/NetworkUtil.java" />
+        <include name="utils/PayloadUtil.java" />
+        <include name="utils/RandomUtil.java" />
+        <include name="utils/YokelUtilities.java" />
+
+    </source>
+
+    <inherits name="com.github.czyzby.websocket.GdxWebSocket" />
+    <inherits name="com.github.czyzby.websocket.GdxWebSocketSerialization" />
+
+    <define-configuration-property name="yokel.files.classpath" is-multi-valued="true" />
+    <extend-configuration-property name="gdx.reflect.include" value="asg.games.yokel.objects.AbstractYokelObject" />
+    <extend-configuration-property name="gdx.reflect.include" value="asg.games.yokel.utils.YokelUtilities" />
+    <extend-configuration-property name="gdx.reflect.include" value="java.util.Date" />
+    <!-- <extend-configuration-property name="yokel.files.classpath" value="asg/games/yokel/objects/AbstractYokelObject.hbm.xml" />
+     <extend-configuration-property name="yokel.files.classpath" value="asg/games/yokel/objects/YokelPlayer.hbm.xml" />
+     <extend-configuration-property name="yokel.files.classpath" value="asg/games/yokel/objects/YokelRoom.hbm.xml" />
+     <extend-configuration-property name="yokel.files.classpath" value="asg/games/yokel/objects/YokelSeat.hbm.xml" />
+     <extend-configuration-property name="yokel.files.classpath" value="asg/games/yokel/objects/YokelTable.hbm.xml" />-->
+
+</module>

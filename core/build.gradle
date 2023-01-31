@@ -1,0 +1,34 @@
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+//eclipse.project.name = appName + '-core'
+//project.name = appName
+version = '0.1.0'
+archivesBaseName = appName
+
+dependencies {
+	api "com.badlogicgames.gdx:gdx:$lmlVersion"
+	api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+	api "com.crashinvaders.lml:gdx-websocket-serialization:$lmlVersion"
+	api "com.crashinvaders.lml:gdx-websocket-common:$lmlVersion"
+	api "com.crashinvaders.lml:gdx-websocket:$lmlVersion"
+	api "com.crashinvaders.lml:gdx-websocket-gwt:$lmlVersion"
+	api "com.crashinvaders.lml:gdx-kiwi:$lmlVersion"
+	api "com.github.tommyettinger:libgdx-utils:$utilsVersion"
+
+	api "org.jetbrains:annotations-java5:$jetbrainsVersion"
+	api "org.tinylog:tinylog:$tinyLogVersion"
+	api "org.hibernate:hibernate-core:$hbmVersion"
+	api 'org.slf4j:slf4j-api:1.7.36'
+
+	compileOnly 'org.projectlombok:lombok:1.18.22'
+
+	// Test dependencies :
+	//testImplementation "junit:junit:$junitVersion"
+	testImplementation "org.assertj:assertj-core:$assertjVersion"
+	testImplementation "org.mockito:mockito-core:$mockitoVersion"
+	testImplementation "org.testng:testng:$testNgVersion"
+	//testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+}
+
+java {
+	withSourcesJar()
+}
