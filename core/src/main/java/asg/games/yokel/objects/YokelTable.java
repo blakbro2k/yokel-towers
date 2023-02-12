@@ -1,14 +1,19 @@
 package asg.games.yokel.objects;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.OrderedMap;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.github.czyzby.kiwi.util.gdx.collection.GdxArrays;
 
 import asg.games.yokel.persistence.YokelStorageAdapter;
 import asg.games.yokel.utils.YokelUtilities;
 
-public class YokelTable extends AbstractYokelObject implements YokelObjectJPAVisitor {
+public class YokelTable extends AbstractYokelObject implements YokelObjectJPAVisitor, Copyable<YokelTable>, Disposable, Json.Serializable {
     public static final String ARG_TYPE = "type";
     public static final String ARG_RATED = "rated";
     public static final String ENUM_VALUE_PRIVATE = "PRIVATE";
@@ -19,7 +24,7 @@ public class YokelTable extends AbstractYokelObject implements YokelObjectJPAVis
 
     public enum ACCESS_TYPE {
         PRIVATE(ENUM_VALUE_PRIVATE), PUBLIC(ENUM_VALUE_PUBLIC), PROTECTED(ENUM_VALUE_PROTECTED);
-        private String accessType;
+        private final String accessType;
 
         ACCESS_TYPE(String accessType) {
             this.accessType = accessType;
@@ -30,17 +35,11 @@ public class YokelTable extends AbstractYokelObject implements YokelObjectJPAVis
         }
     }
 
-    private ACCESS_TYPE accessType;
-
+    private ACCESS_TYPE accessType = ACCESS_TYPE.PUBLIC;
     private Array<YokelSeat> seats = GdxArrays.newArray();
-
     private Array<YokelPlayer> watchers = GdxArrays.newArray();
-
-
-    private boolean isRated;
-
-    private boolean isSoundOn;
-
+    private boolean isRated = false;
+    private boolean isSoundOn = true;
     private String roomId;
 
     //Empty Constructor required for Json.Serializable
@@ -57,14 +56,12 @@ public class YokelTable extends AbstractYokelObject implements YokelObjectJPAVis
     }
 
     private void initialize(int nameNumber, OrderedMap<String, Object> arguments) {
-        System.out.println("initialize.");
         setTableName(nameNumber);
         setUpSeats();
-        setSound(true);
         setUpArguments(arguments);
     }
 
-    private void setTableName(int tableNumber) {
+    public void setTableName(int tableNumber) {
         setName(roomId + ATT_NAME_PREPEND + tableNumber);
     }
 
@@ -221,13 +218,25 @@ public class YokelTable extends AbstractYokelObject implements YokelObjectJPAVis
 
     @Override
     public void dispose() {
-        if (seats != null) {
-            seats.clear();
-        }
+        YokelUtilities.clearArrays(seats, watchers);
     }
 
+    @Override
+    public YokelTable copy() {
+        YokelTable copy;
+        try {
+            copy = ClassReflection.newInstance(YokelTable.class);
+        } catch (ReflectionException e) {
+            throw new GdxRuntimeException("There was an issue copying " + getName());
+        }
+        copy.setName(this.name);
+        copy.setRoomId(this.roomId);
+        return copy;
+    }
+
+    @Override
     public YokelTable deepCopy() {
-        YokelTable copy = new YokelTable();
+        YokelTable copy = copy();
         copyParent(copy);
         copy.setAccessType(accessType);
         copy.setRated(isRated);
@@ -247,6 +256,32 @@ public class YokelTable extends AbstractYokelObject implements YokelObjectJPAVis
             }
         } catch (Exception e) {
             throw new GdxRuntimeException("Issue visiting save for " + this.getClass().getSimpleName() + ": ", e);
+        }
+    }
+
+    @Override
+    public void write(Json json) {
+        super.write(json);
+        if(json != null) {
+            json.writeValue("accessType", accessType);
+            json.writeValue("isRated", isRated);
+            json.writeValue("isSoundOn", isSoundOn);
+            json.writeValue("roomId", roomId);
+            json.writeValue("seats", seats);
+            json.writeValue("watchers", watchers);
+        }
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonValue){
+        super.read(json, jsonValue);
+        if(json != null) {
+            accessType = json.readValue("accessType", ACCESS_TYPE.class, jsonValue);
+            isRated = json.readValue("isRated", Boolean.class, jsonValue);
+            isSoundOn = json.readValue("isRated", Boolean.class, jsonValue);
+            roomId = json.readValue("isRated", String.class, jsonValue);
+            Object result = json.readValue("seats", Array.class, jsonValue);
+            //watchers = json.readValue("watchers", Array.class, jsonValue);
         }
     }
 }

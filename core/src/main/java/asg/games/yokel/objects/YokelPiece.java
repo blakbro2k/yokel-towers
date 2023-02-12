@@ -1,8 +1,13 @@
 package asg.games.yokel.objects;
 
-public class YokelPiece extends AbstractYokelObject {
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
+
+import asg.games.yokel.utils.YokelUtilities;
+
+public class YokelPiece extends AbstractYokelObject implements Json.Serializable {
+    private final int[] cells = new int[3];
     private int index;
-    private int[] cells;
     public int row;
     public int column;
 
@@ -10,7 +15,6 @@ public class YokelPiece extends AbstractYokelObject {
     public YokelPiece(){}
 
     public YokelPiece(int index, int block1, int block2, int block3){
-        init();
         this.index = index;
         setBlock1(block1);
         setBlock2(block2);
@@ -23,11 +27,6 @@ public class YokelPiece extends AbstractYokelObject {
 
     public int[] getCells(){
         return cells;
-    }
-    private void init(){
-        if(this.cells == null){
-            this.cells = new int[3];
-        }
     }
 
     public int getBlock1(){
@@ -62,9 +61,6 @@ public class YokelPiece extends AbstractYokelObject {
         this.index = index;
     }
 
-    @Override
-    public void dispose() {}
-
     public void setPosition(int r, int c) {
         if(r < 0) throw new RuntimeException("Row value cannot be less than zero!");
         if(c < 0) throw new RuntimeException("Column value cannot be less than zero!");
@@ -88,5 +84,37 @@ public class YokelPiece extends AbstractYokelObject {
         setBlock1(tempBlock2);
         setBlock2(tempBlock3);
         setBlock3(tempBlock1);
+    }
+
+    @Override
+    public void write(Json json) {
+        super.write(json);
+        if(json != null) {
+            json.writeValue("index", index);
+            json.writeValue("row", row);
+            json.writeValue("column", column);
+            json.writeArrayStart("cells");
+            json.writeValue(getBlock1());
+            json.writeValue(getBlock2());
+            json.writeValue(getBlock3());
+            json.writeArrayEnd();
+        }
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonValue){
+        super.read(json, jsonValue);
+        if(json != null) {
+            index = json.readValue("index", Integer.class, jsonValue);
+            row = json.readValue("row", Integer.class, jsonValue);
+            column = json.readValue("column", Integer.class, jsonValue);
+            //column = json.readValue("column", Array.class, jsonValue);
+            //icon = json.readValue("icon", Integer.class, jsonValue);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return YokelUtilities.getJsonString(this.getClass(), this);
     }
 }

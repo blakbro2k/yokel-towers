@@ -56,13 +56,15 @@
 
     </source>
 
-    <inherits name="com.github.czyzby.websocket.GdxWebSocket" />
-    <inherits name="com.github.czyzby.websocket.GdxWebSocketSerialization" />
+    <!--<inherits name="com.github.czyzby.websocket.GdxWebSocket" />
+    <inherits name="com.github.czyzby.websocket.GdxWebSocketSerialization" />-->
 
-    <define-configuration-property name="yokel.files.classpath" is-multi-valued="true" />
-    <extend-configuration-property name="gdx.reflect.include" value="asg.games.yokel.objects.AbstractYokelObject" />
+    <!--<define-configuration-property name="yokel.files.classpath" is-multi-valued="true" />-->
     <extend-configuration-property name="gdx.reflect.include" value="asg.games.yokel.utils.YokelUtilities" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.util.Date" />
+    <extend-configuration-property name="gdx.reflect.include" value="asg.games.yokel.objects.YokelObject" />
+    <extend-configuration-property name="gdx.reflect.include" value="asg.games.yokel.objects.AbstractYokelObject" />
+    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Long" />
+
     <!-- <extend-configuration-property name="yokel.files.classpath" value="asg/games/yokel/objects/AbstractYokelObject.hbm.xml" />
      <extend-configuration-property name="yokel.files.classpath" value="asg/games/yokel/objects/YokelPlayer.hbm.xml" />
      <extend-configuration-property name="yokel.files.classpath" value="asg/games/yokel/objects/YokelRoom.hbm.xml" />

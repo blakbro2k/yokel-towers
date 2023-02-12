@@ -1,19 +1,22 @@
 package asg.games.yokel.objects;
 
-import java.util.Date;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.TimeUtils;
+
 import java.util.Objects;
 
 import asg.games.yokel.utils.YokelUtilities;
 
-public abstract class AbstractYokelObject implements YokelObject {
+public abstract class AbstractYokelObject implements YokelObject, Json.Serializable {
     protected String id;
     protected String name;
-    protected Date created;
-    protected Date modified;
+    protected long created;
+    protected long modified;
 
     AbstractYokelObject(){
-        setCreated(new Date());
-        setModified(new Date());
+        setCreated(TimeUtils.millis());
+        setModified(TimeUtils.millis());
     }
 
     @Override
@@ -25,7 +28,8 @@ public abstract class AbstractYokelObject implements YokelObject {
             return Objects.equals(getId(), that.getId());
         } else {
             return Objects.equals(name, that.getName()) &&
-                    Objects.equals(created, that.getCreated());
+                    Objects.equals(created, that.getCreated())&&
+                    Objects.equals(modified, that.getModified());
         }
     }
 
@@ -34,17 +38,34 @@ public abstract class AbstractYokelObject implements YokelObject {
         if(getId() != null) {
             return Objects.hash(id);
         } else {
-            return Objects.hash(name, created);
+            return Objects.hash(name, created, modified);
         }
     }
 
     @Override
-    public String toString() { return YokelUtilities.getJsonString(this);}
-
-    public <T> String toString(Class<T> type) { return YokelUtilities.getJsonString(type,this);}
+    public void write(Json json) {
+        if(json != null) {
+            json.writeValue("id", id);
+            json.writeValue("name", name);
+            json.writeValue("created", created);
+            json.writeValue("modified", modified);
+        }
+    }
 
     @Override
-    public abstract void dispose();
+    public String toString() {
+        return YokelUtilities.getJsonString(this.getClass(), this);
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonValue) {
+        if(json != null) {
+            id = json.readValue("id", String.class, jsonValue);
+            name = json.readValue("name", String.class, jsonValue);
+            created = json.readValue("created", Long.class, jsonValue);
+            modified = json.readValue("modified", Long.class, jsonValue);
+        }
+    }
 
     public void setId(String id){ this.id = id;}
 
@@ -58,19 +79,19 @@ public abstract class AbstractYokelObject implements YokelObject {
         return this.name;
     }
 
-    public void setCreated(Date date) {
-        this.created = date;
+    public void setCreated(long dateTime) {
+        this.created = dateTime;
     }
 
-    public Date getCreated() {
+    public long getCreated() {
         return created;
     }
 
-    public void setModified(Date date) {
-        this.modified = date;
+    public void setModified(long dateTime) {
+        this.modified = dateTime;
     }
 
-    public Date getModified() {
+    public long getModified() {
         return modified;
     }
 

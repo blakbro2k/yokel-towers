@@ -1,8 +1,5 @@
 package asg.games.yokel.utils;
 
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.backends.lwjgl3.audio.OpenALSound;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -16,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Array.ArrayIterator;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -25,9 +23,13 @@ import com.github.czyzby.kiwi.util.gdx.collection.GdxArrays;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.StreamSupport;
 
+import asg.games.yokel.objects.YokelObject;
+import asg.games.yokel.objects.YokelPlayer;
 import asg.games.yokel.objects.YokelRoom;
+import asg.games.yokel.objects.YokelSeat;
 
 public class YokelUtilities extends UtilitiesClass {
     /**
@@ -76,9 +78,6 @@ public class YokelUtilities extends UtilitiesClass {
     }
 
     /*
-
-
-
     public static String printYokelObject(YokelObject yokelObject) {
         return json.prettyPrint(yokelObject);
     }
@@ -117,8 +116,6 @@ public class YokelUtilities extends UtilitiesClass {
             children.end();
         }
     }
-
-
      */
 
     /**
@@ -148,9 +145,6 @@ public class YokelUtilities extends UtilitiesClass {
         }
         return missingValue;
     }
-
-
-
 
     public static Array<String> arrayToList(String[] o) {
         int size = o.length;
@@ -184,7 +178,6 @@ public class YokelUtilities extends UtilitiesClass {
         return returnList;
     }
 
-
     public static Label createLabel(Skin skin, String text, float size){
         Label label = new Label("", skin);
         if(!isEmpty(text)){
@@ -212,8 +205,6 @@ public class YokelUtilities extends UtilitiesClass {
     }
 
     private static <T extends Actor> boolean isInstance(Class<T> klass, T actor) {
-        System.out.println("klass=" + klass.getSimpleName());
-        System.out.println("actor class=" + actor.getClass().getSimpleName());
         return equalsIgnoreCase(klass.getSimpleName(), actor.getClass().getSimpleName());
     }
 
@@ -227,13 +218,11 @@ public class YokelUtilities extends UtilitiesClass {
         return max;
     }
 
-
     public static void flushIterator(Iterator<?> iterator) {
         while(iterator != null && iterator.hasNext()){
             iterator.remove();
         }
     }
-
 
     public static <Type> ObjectMap.Values<Type> getMapValues(ObjectMap<?, Type> objectMap) {
         return new ObjectMap.Values<>(objectMap);
@@ -247,25 +236,22 @@ public class YokelUtilities extends UtilitiesClass {
         return new ArrayIterator<>(array);
     }
 
-    @Deprecated
-    public static float getSoundDuration(Sound soundFile) {
-        /*FileHandle file=Gdx.files.internal(filepath);
-        FileHandle external=Gdx.files.external("mygame/"+filepath);
-        if(!external.exists())file.copyTo(external); //copy the file to the external storage
-        Mpg123Decoder   decoder = new Mpg123Decoder(external);
-        System.out.println("name:"+filepath+"  duration:"+decoder.getLength());
-        System.out.println("Sound type: " + soundFile.getClass());
-        soundFile.play()*/
-        //if(soundFile instanceof OpenALSound){
-        //    return ((OpenALSound) soundFile).duration();
-        //} else {
-        //    return -1;
-       // }
-        return 1;
-    }
-
     public static int sizeOf(Iterable<Integer> collection) {
         return collection == null ? -1 : (int) StreamSupport.stream(collection.spliterator(), false).count();
+    }
+
+    public static void clearArrays(final Array<?>... arrays) {
+        if(arrays != null) {
+            for (final Array<?> array : arrays) {
+                clearArray(array);
+            }
+        }
+    }
+
+    public static void clearArray(final Array<?> array) {
+        if(array != null) {
+            array.clear();
+        }
     }
 
     public static class IDGenerator {
@@ -306,7 +292,7 @@ public class YokelUtilities extends UtilitiesClass {
      * @param title
      * @return
      */
-    public static String cleanTitle(String title) throws GdxRuntimeException{
+    public static String cleanTitle(final String title) throws GdxRuntimeException{
         String ret = "";
         if (title != null) {
             ret = title.replace("#8211", "-")
@@ -370,10 +356,6 @@ public class YokelUtilities extends UtilitiesClass {
         return new Array.ArrayIterable<>(GdxArrays.newArray());
     }*/
 
-    public static String getJsonString(Object o){
-        return json.toJson(o);
-    }
-
     public static <T> String getJsonString(Class<T> type, Object o){
         return json.toJson(o, type);
     }
@@ -403,7 +385,6 @@ public class YokelUtilities extends UtilitiesClass {
         }
         return false;
     }
-
 
     public static boolean otob(Object o){
         if(o != null){

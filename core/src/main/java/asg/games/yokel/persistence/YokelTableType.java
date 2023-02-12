@@ -5,13 +5,12 @@ import org.hibernate.engine.spi.SharedSessionContractImplementor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 
 import asg.games.yokel.objects.YokelTable;
 
 public class YokelTableType extends YokelUserType {
     @Override
-    public Class returnedClass() {
+    public Class<YokelTable> returnedClass() {
         return YokelTable.class;
     }
 
@@ -20,8 +19,8 @@ public class YokelTableType extends YokelUserType {
         //id	created	modified	name	access_type	rated	sound	room
         YokelTable result = null;
         String id = rs.getString(names[0]);
-        Date created = new Date(rs.getLong(names[1]));
-        Date modified = new Date(rs.getLong(names[2]));
+        long created = rs.getLong(names[1]);
+        long modified = rs.getLong(names[2]);
         String name = rs.getString(names[3]);
         String accessType = rs.getString(names[4]);
         boolean rated = rs.getBoolean(names[5]);

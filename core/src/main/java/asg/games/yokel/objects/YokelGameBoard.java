@@ -1,7 +1,7 @@
 package asg.games.yokel.objects;
 
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Queue;
-import com.github.czyzby.kiwi.util.gdx.asset.Disposables;
 
 import java.util.Arrays;
 import java.util.Stack;
@@ -10,7 +10,7 @@ import java.util.Vector;
 import asg.games.yokel.utils.RandomUtil;
 import asg.games.yokel.utils.YokelUtilities;
 
-public class YokelGameBoard extends AbstractYokelObject {
+public class YokelGameBoard extends AbstractYokelObject implements Disposable {
 
     public static final int MAX_RANDOM_BLOCK_NUMBER = 2048;
     public static final int MAX_COLS = 6;
@@ -29,9 +29,9 @@ public class YokelGameBoard extends AbstractYokelObject {
     private int[][] cells;
     private boolean[] ids;
     private int idIndex;
-    private static int[] targetRows = new int[MAX_COLS];
-    private int[] randomColumnIndices = new int[MAX_COLS];
-    private boolean[][] colorBlastGrid
+    private static final int[] targetRows = new int[MAX_COLS];
+    private final int[] randomColumnIndices = new int[MAX_COLS];
+    private final boolean[][] colorBlastGrid
             = { new boolean[MAX_COLS],
             new boolean[MAX_COLS],
             new boolean[MAX_COLS],
@@ -48,19 +48,20 @@ public class YokelGameBoard extends AbstractYokelObject {
             new boolean[MAX_COLS],
             new boolean[MAX_COLS],
             new boolean[MAX_COLS] };
-    private int[] pushRowOrder = { 0, 1, 2, 2, 1, 0};
-    private int[] pushColumnOrder = { 2, 3, 1, 4, 0, 5};
-    private int[] countOfPieces = new int[MAX_COLS];
+    private final int[] pushRowOrder = { 0, 1, 2, 2, 1, 0};
+    private final int[] pushColumnOrder = { 2, 3, 1, 4, 0, 5};
+    private final int[] countOfPieces = new int[MAX_COLS];
 
-    private boolean[] cellMatches = new boolean[7];
-    private int[] cellIndices = { 0, 1, 2,  3,  4,  5, 6};
-    private int[] cellHashes = { 5, 25, 7, 49, 35, 19, 23};
+    private final boolean[] cellMatches = new boolean[7];
+    private final int[] cellIndices = { 0, 1, 2,  3,  4,  5, 6};
+    private final int[] cellHashes = { 5, 25, 7, 49, 35, 19, 23};
 
-    private int[] columnMatchLookup = { -1, -1, 0, 1, 1, 1, 0, -1};
-    private int[] rowMatchLookup = { 0, 1, 1, 1, 0, -1, -1, -1};
+    private final int[] columnMatchLookup = { -1, -1, 0, 1, 1, 1, 0, -1};
+    private final int[] rowMatchLookup = { 0, 1, 1, 1, 0, -1, -1, -1};
 
     private YokelPiece piece;
     private YokelPiece nextPiece;
+    private YokelClock gameClock;
 
     private float pieceFallTimer;
     private float blockFallTimer;
@@ -68,8 +69,8 @@ public class YokelGameBoard extends AbstractYokelObject {
     private int currentBlockPointer = -1;
     private boolean fastDown;
     private Queue<Integer> powers;
-    private int[] countOfBreaks = new int[MAX_COLS];
-    private int[] powersKeep = new int[MAX_COLS];
+    private final int[] countOfBreaks = new int[MAX_COLS];
+    private final int[] powersKeep = new int[MAX_COLS];
     private int yahooDuration, brokenBlockCount = 0;
     private boolean hasGameStarted;
 
@@ -91,11 +92,13 @@ public class YokelGameBoard extends AbstractYokelObject {
         blockFallTimer = MAX_FALL_VALUE;
         powers = new Queue<>();
         specialPieces = new Queue<>();
+        gameClock = new YokelClock();
         reset(seed);
     }
 
     public void reset(long seed){
         nextBlocks = new RandomUtil.RandomNumberArray(MAX_RANDOM_BLOCK_NUMBER, seed, MAX_COLS);
+        gameClock.stop();
         clearBoard();
         powers.clear();
         end();
@@ -103,7 +106,6 @@ public class YokelGameBoard extends AbstractYokelObject {
 
     @Override
     public void dispose() {
-        Disposables.disposeOf(piece, nextPiece, MEDUSA_PIECE, MIDAS_PIECE);
         specialPieces.clear();
         powers.clear();
     }
@@ -111,6 +113,7 @@ public class YokelGameBoard extends AbstractYokelObject {
     public void begin(){
         if(!hasGameStarted){
             getNewNextPiece();
+            gameClock.start();
             hasGameStarted = true;
         }
     }
@@ -120,8 +123,6 @@ public class YokelGameBoard extends AbstractYokelObject {
     }
 
     public void end(){
-        //private int[] countOfBreaks = new int[MAX_COLS];
-        //private int[] powersKeep = new int[MAX_COLS];
         yahooDuration = 0;
         brokenBlockCount = 0;
         currentBlockPointer = -1;

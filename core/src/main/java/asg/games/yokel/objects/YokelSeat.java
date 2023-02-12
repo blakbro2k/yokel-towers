@@ -1,18 +1,18 @@
 package asg.games.yokel.objects;
 
+import com.badlogic.gdx.utils.Disposable;
+
 import asg.games.yokel.utils.YokelUtilities;
 
 /**
  * Created by Blakbro2k on 1/28/2018.
  */
 
-public class YokelSeat extends AbstractYokelObject {
+public class YokelSeat extends AbstractYokelObject implements Disposable {
     private static final String ATTR_SEAT_NUM_SEPARATOR = "-";
 
     private YokelPlayer seatedPlayer;
-
     private String tableId;
-
     private boolean isSeatReady = false;
 
     //Empty Constructor required for Json.Serializable
@@ -62,7 +62,6 @@ public class YokelSeat extends AbstractYokelObject {
     @Override
     public void dispose() {
         if(isOccupied()){
-            seatedPlayer.dispose();
             standUp();
         }
     }

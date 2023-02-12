@@ -1,11 +1,6 @@
 package asg.games.yokel.objects;
 
-import com.badlogic.gdx.utils.Disposable;
-
-import java.util.Date;
-
-public interface YokelObject extends Disposable {
-
+public interface YokelObject {
     /** Sets the Object ID*/
     void setId(String id);
 
@@ -19,14 +14,14 @@ public interface YokelObject extends Disposable {
     String getName();
 
     /** Sets the Object created date*/
-    void setCreated(Date date);
+    void setCreated(long dateTime);
 
     /** Returns the Object created date*/
-    Date getCreated();
+    long getCreated();
 
     /** Sets the Object modified date*/
-    void setModified(Date date);
+    void setModified(long dateTime);
 
     /** Returns the Object modified date*/
-    Date getModified();
+    long getModified();
 }

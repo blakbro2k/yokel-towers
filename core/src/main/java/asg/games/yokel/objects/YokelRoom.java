@@ -1,9 +1,12 @@
 package asg.games.yokel.objects;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.OrderedMap;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.github.czyzby.kiwi.util.gdx.collection.GdxArrays;
 import com.github.czyzby.kiwi.util.gdx.collection.GdxMaps;
 
@@ -14,16 +17,14 @@ import asg.games.yokel.utils.YokelUtilities;
  * Created by Blakbro2k on 1/28/2018.
  */
 
-public class YokelRoom extends AbstractYokelObject implements YokelObjectJPAVisitor {
+public class YokelRoom extends AbstractYokelObject implements YokelObjectJPAVisitor, Copyable<YokelRoom>, Disposable {
     public static final String SOCIAL_GROUP = "Social";
     public static final String BEGINNER_GROUP = "Beginner";
     public static final String INTERMEDIATE_GROUP = "Intermediate";
     public static final String ADVANCED_GROUP = "Advanced";
 
     private Array<YokelPlayer> players = GdxArrays.newArray();
-
     private ObjectMap<Integer, YokelTable> tables = GdxMaps.newObjectMap();
-
     private String loungeName;
 
     //Empty Constructor required for Json.Serializable
@@ -69,9 +70,9 @@ public class YokelRoom extends AbstractYokelObject implements YokelObjectJPAVisi
         players.removeValue(player, false);
     }
 
-public YokelTable addTable(){
+    public YokelTable addTable() {
         return addTable(null);
-}
+    }
 
     public YokelTable addTable(OrderedMap<String, Object> arguments) {
         YokelTable table;
@@ -104,19 +105,29 @@ public YokelTable addTable(){
 
     @Override
     public void dispose() {
-        if (players != null) {
-            players.clear();
-        }
-
+        YokelUtilities.clearArrays(players);
         if (tables != null) {
             tables.clear();
         }
     }
 
+    @Override
+    public YokelRoom copy() {
+        YokelRoom copy;
+        try {
+            copy = ClassReflection.newInstance(YokelRoom.class);
+        } catch (ReflectionException e) {
+            throw new GdxRuntimeException("There was an issue copying " + getName());
+        }
+        copy.setName(this.name);
+        copy.setLoungeName(this.loungeName);
+        return copy;
+    }
+
+    @Override
     public YokelRoom deepCopy() {
-        YokelRoom copy = new YokelRoom();
+        YokelRoom copy = copy();
         copyParent(copy);
-        copy.setLoungeName(loungeName);
         copy.setAllPlayers(players);
         copy.setAllTables(tables);
         return copy;
@@ -125,7 +136,7 @@ public YokelTable addTable(){
     @Override
     public void visitSave(YokelStorageAdapter adapter) {
         try {
-            if(adapter != null) {
+            if (adapter != null) {
                 adapter.putAllTables(YokelUtilities.getMapValues(tables));
                 adapter.putAllPlayers(players);
             }

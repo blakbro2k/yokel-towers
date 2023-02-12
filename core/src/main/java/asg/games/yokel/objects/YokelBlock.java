@@ -1,12 +1,17 @@
 package asg.games.yokel.objects;
 
+import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Pool;
+
+import asg.games.yokel.utils.YokelUtilities;
 
 /**
  * Created by Blakbro2k on 12/29/2017.
  */
 
-public class YokelBlock extends AbstractYokelObject implements Pool.Poolable {
+public class YokelBlock extends AbstractYokelObject implements Pool.Poolable, Json.Serializable, Disposable {
     /* Retrieves power "level"
      * - Even represents defensive powers ( 2, 4, 6 )
      * - Odd represents attack powers ( 3, 5, 7 )
@@ -131,5 +136,30 @@ public class YokelBlock extends AbstractYokelObject implements Pool.Poolable {
 
     public boolean hasPower(){
         return powerIntensity > 0;
+    }
+
+    @Override
+    public String toString() {
+        return YokelUtilities.getJsonString(this.getClass(), this);
+    }
+
+    @Override
+    public void write(Json json) {
+        if(json != null) {
+            json.writeValue("x", x);
+            json.writeValue("y", y);
+            json.writeValue("blockType", blockType);
+            json.writeValue("powerIntensity", powerIntensity);
+        }
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonValue) {
+        if(json != null) {
+            x = json.readValue("x", Integer.class, jsonValue);
+            y = json.readValue("y", Integer.class, jsonValue);
+            blockType = json.readValue("blockType", Integer.class, jsonValue);
+            powerIntensity = json.readValue("powerIntensity", Integer.class, jsonValue);
+        }
     }
 }

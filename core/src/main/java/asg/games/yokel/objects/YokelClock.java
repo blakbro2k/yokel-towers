@@ -29,6 +29,14 @@ public class YokelClock extends AbstractYokelObject {
         isRunning = false;
     }
 
+    public long getStart() {
+        return start;
+    }
+
+    public boolean getIsRunning() {
+        return isRunning;
+    }
+
     private int getSeconds(){
         if(isRunning()){
             return Math.round(getElapsedSeconds()) % 60;
@@ -46,7 +54,4 @@ public class YokelClock extends AbstractYokelObject {
     public boolean isRunning(){
         return this.isRunning;
     }
-
-    @Override
-    public void dispose() {}
 }

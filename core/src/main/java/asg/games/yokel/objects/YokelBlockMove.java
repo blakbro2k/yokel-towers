@@ -13,7 +13,4 @@ public class YokelBlockMove extends AbstractYokelObject {
         this.y = y;
         this.targetRow = targetRow;
     }
-
-    @Override
-    public void dispose() {}
 }

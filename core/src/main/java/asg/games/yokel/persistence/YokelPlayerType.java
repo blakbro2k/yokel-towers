@@ -5,13 +5,12 @@ import org.hibernate.engine.spi.SharedSessionContractImplementor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 
 import asg.games.yokel.objects.YokelPlayer;
 
 public class YokelPlayerType extends YokelUserType {
     @Override
-    public Class returnedClass() {
+    public Class<YokelPlayer> returnedClass() {
         return YokelPlayer.class;
     }
 
@@ -20,8 +19,8 @@ public class YokelPlayerType extends YokelUserType {
         YokelPlayer result = null;
         //id	created	modified	name	icon	rating
         String id = rs.getString(names[0]);
-        Date created = new Date(rs.getLong(names[1]));
-        Date modified = new Date(rs.getLong(names[2]));
+        long created = rs.getLong(names[1]);
+        long modified = rs.getLong(names[2]);
         String name = rs.getString(names[3]);
         int icon = rs.getInt(names[4]);
         int rating = rs.getInt(names[5]);

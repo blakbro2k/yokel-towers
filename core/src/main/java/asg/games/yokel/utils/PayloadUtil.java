@@ -6,7 +6,6 @@ import asg.games.yokel.managers.GameManager;
 import asg.games.yokel.objects.YokelPlayer;
 import asg.games.yokel.objects.YokelTable;
 
-@SuppressWarnings("ConfusingArgumentToVarargsMethod")
 public class PayloadUtil {
     private static final String[] EMPTY_ARRAY = {""};
 
@@ -135,7 +134,7 @@ public class PayloadUtil {
         //Logger.trace("Enter getAllRegisteredPlayersRequest()");
 
         Array<YokelPlayer> ret = new Array<>();
-        if(validatedInputs(clientPayload)){
+        if(validatedInputs((java.lang.Object[]) clientPayload)){
             for(String payload : clientPayload){
                 ret.add(YokelUtilities.getObjectFromJsonString(YokelPlayer.class, payload));
             }
@@ -148,7 +147,7 @@ public class PayloadUtil {
         //Logger.trace("Enter getAllTablesRequest()");
 
         Array<YokelTable> ret = new Array<>();
-        if(validatedInputs(clientPayload)){
+        if(validatedInputs((java.lang.Object[]) clientPayload)){
             for(String payload : clientPayload){
                 ret.add(YokelUtilities.getObjectFromJsonString(YokelTable.class, payload));
             }
